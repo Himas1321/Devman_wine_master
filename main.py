@@ -3,8 +3,11 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import datetime
 import pandas
 import collections
+import argparse
+
 
 FOUNDING_YEAR = 1920
+
 
 def choose_year_word(age):
     last_two = age % 100
@@ -18,16 +21,23 @@ def choose_year_word(age):
         return "года"
     return "лет"
 
+
 def main():
-	grouped_wine = collections.defaultdict(list)
+	parser = argparse.ArgumentParser()
+	parser.add_argument(
+		"--wine", 
+		default="products.xlsx"
+		)
+	args = parser.parse_args()
 
-	excel_wine = pandas.read_excel('wine3.xlsx')
-	excel_wine = excel_wine.fillna('')
-	wine = excel_wine.to_dict(orient='records')
+	excel_wines = pandas.read_excel(args.wine)
+	excel_wines = excel_wines.fillna('')
+	wines = excel_wines.to_dict(orient='records')
+	grouped_wines = collections.defaultdict(list)
 
-	for i in wine:
-		kategoria = i["Категория"]
-		grouped_wine[kategoria].append(i)
+	for product in wines:
+		kategoria = product["Категория"]
+		grouped_wines[kategoria].append(product)
 
 	today = datetime.datetime.now().year
 	age = today - FOUNDING_YEAR
@@ -43,7 +53,7 @@ def main():
 	rendered = template.render(
 		age=age,
 		year_word=word,
-		wines=grouped_wine
+		wines=grouped_wines
 	)
 
 	with open("index.html", "w", encoding="utf-8") as file:
@@ -51,6 +61,7 @@ def main():
 
 	server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
 	server.serve_forever()
+
 
 if __name__ == '__main__':
 	main()
