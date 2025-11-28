@@ -23,11 +23,13 @@ def choose_year_word(age):
 
 
 def main():
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(
+		description="Генерирует сайт винодельни на основе Excel-файла."
+	)
 	parser.add_argument(
 		"--wine", 
 		default="products.xlsx"
-		)
+	)
 	args = parser.parse_args()
 
 	excel_wines = pandas.read_excel(args.wine)
@@ -36,8 +38,8 @@ def main():
 	grouped_wines = collections.defaultdict(list)
 
 	for product in wines:
-		kategoria = product["Категория"]
-		grouped_wines[kategoria].append(product)
+		category = product["Категория"]
+		grouped_wines[category].append(product)
 
 	today = datetime.datetime.now().year
 	age = today - FOUNDING_YEAR
