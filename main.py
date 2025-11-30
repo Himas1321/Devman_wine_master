@@ -27,7 +27,8 @@ def main():
 		description="Генерирует сайт винодельни на основе Excel-файла."
 	)
 	parser.add_argument(
-		"--wine", 
+		"--wine",
+		help="Путь к Excel-файлу с продукцией.",
 		default="products.xlsx"
 	)
 	args = parser.parse_args()
